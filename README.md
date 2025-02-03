@@ -27,7 +27,7 @@ cd nova_farm
 flutter pub get
 ```
 
-### 4️⃣ Configuration Firebase
+### 4️⃣ Configuration Firebase (à ne pas faire, c'est déjà fait !) 
 1. Créez un projet Firebase sur [Firebase Console](https://console.firebase.google.com/).
 2. Activez **Firestore Database** et **Authentication**.
 3. Téléchargez le fichier `google-services.json` (Android) ou `GoogleService-Info.plist` (iOS) et placez-le dans le dossier approprié :
