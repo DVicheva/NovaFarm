@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "170465291810",
+    "project_id": "novafarm-8a995",
+    "storage_bucket": "novafarm-8a995.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170465291810:android:0e4791fe0c5af235d3a47b",
+        "android_client_info": {
+          "package_name": "com.ece.novafarm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT_gS0xaFDMeaAWdtWM9lmub0Nq-Z8xqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
