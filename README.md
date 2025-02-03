@@ -1,117 +1,80 @@
-🌱 NovaFarm - Application Flutter
+# 📌 NovaFarm - Application Flutter
 
-NovaFarm est une application Flutter permettant de gérer des parcelles agricoles avec des capteurs d'humidité et une IA connectée à Firebase.
+NovaFarm est une application mobile développée avec **Flutter** et **Firebase** permettant la gestion et l'automatisation de l'irrigation agricole à l'aide de capteurs intelligents.
 
-🛠️ Prérequis
+## 🚀 Installation et Configuration
 
-Avant de commencer, assure-toi d'avoir les outils suivants installés sur ton système :
+### 1️⃣ Prérequis
+Avant de commencer, assurez-vous d'avoir installé :
 
-Flutter SDK
+- [Flutter](https://flutter.dev/docs/get-started/install) (version recommandée : 3.x.x)
+- [Dart](https://dart.dev/get-dart) (inclus avec Flutter)
+- [Visual Studio Code](https://code.visualstudio.com/) ou [Android Studio](https://developer.android.com/studio)
+- [Git](https://git-scm.com/)
+- Un émulateur Android/iOS ou un appareil physique
 
-📌 Installation Flutter
+### 2️⃣ Cloner le projet
 
-Vérifie l'installation avec :
+```bash
+# Ouvrez un terminal et exécutez la commande :
+git clone https://github.com/votre-utilisateur/nova_farm.git
+cd nova_farm
+```
 
-flutter doctor
+### 3️⃣ Installation des dépendances
 
-Dart SDK (inclus avec Flutter)
+```bash
+flutter pub get
+```
 
-Vérifie l’installation avec :
+### 4️⃣ Configuration Firebase
+1. Créez un projet Firebase sur [Firebase Console](https://console.firebase.google.com/).
+2. Activez **Firestore Database** et **Authentication**.
+3. Téléchargez le fichier `google-services.json` (Android) ou `GoogleService-Info.plist` (iOS) et placez-le dans le dossier approprié :
+   - `android/app/` pour Android
+   - `ios/Runner/` pour iOS
+4. Activez l'authentification avec l'email et les fournisseurs de votre choix.
 
-dart --version
+### 5️⃣ Lancer l'application
 
-Android Studio ou VS Code (recommandé)
+```bash
+flutter run
+```
 
-📌 Installation VS Code
+> **Note :** Si vous souhaitez exécuter l'application sur iOS, assurez-vous d'avoir Xcode installé et configuré.
 
-📌 Installation Android Studio
+## 🌱 Développement
 
-Git
+### Structure du projet
+```
+📂 nova_farm
+ ┣ 📂 lib
+ ┃ ┣ 📂 pages       # Pages principales (Home, Statistiques, Paramètres...)
+ ┃ ┣ 📂 widgets     # Composants réutilisables
+ ┃ ┣ 📂 services    # Gestion des services (Firebase, API...)
+ ┃ ┗ main.dart      # Point d'entrée de l'application
+ ┣ 📂 android       # Fichiers Android
+ ┣ 📂 ios           # Fichiers iOS
+ ┣ 📂 assets        # Images et fichiers statiques
+ ┣ pubspec.yaml     # Dépendances Flutter
+ ┗ README.md        # Documentation
+```
 
-📌 Installation Git
+### 🔥 Déploiement sur GitHub
 
-Vérifie l’installation avec :
-
-git --version
-
-🚀 Installation du projet
-
-1️⃣ Cloner le projet depuis GitHub
-
-Ouvre un terminal et exécute :
-
- git clone https://github.com/ton-utilisateur/ton-repo.git
- cd ton-repo
-
-Si tu veux contribuer au projet, fork-le et clone-le depuis ton repo :
-
- git clone https://github.com/ton-utilisateur/nova_farm.git
- cd nova_farm
-
-2️⃣ Installer les dépendances
-
-Exécute la commande suivante pour télécharger toutes les dépendances Flutter :
-
- flutter pub get
-
-3️⃣ Configuration Firebase 🔥
-
-Créer un projet Firebase sur Firebase Console
-
-Ajouter une application Flutter dans Firebase
-
-Télécharger le fichier google-services.json (pour Android) et GoogleService-Info.plist (pour iOS)
-
-Placer le fichier :
-
-Android : android/app/google-services.json
-
-iOS : ios/Runner/GoogleService-Info.plist
-
-Activer Firestore, Authentication et Realtime Database dans Firebase
-
-4️⃣ Lancer l'application
-
-Utilise la commande suivante pour exécuter l'application sur un simulateur ou un appareil physique :
-
- flutter run
-
-Si tu veux exécuter l’application sur un appareil spécifique :
-
- flutter devices  # Liste les appareils connectés
- flutter run -d <device_id>
-
-💡 Développement avec VS Code
-
-Si tu utilises VS Code, installe les extensions Flutter/Dart :
-
-Flutter (par Google)
-
-Dart (par Dart Code)
-
-Ajoute le débogage avec :
-
-code .
-
-🌍 Utilisation de GitHub
-
-1️⃣ Initialiser GitHub dans ton projet
-
+```bash
+# Initialiser le dépôt
 git init
-git remote add origin https://github.com/ton-utilisateur/ton-repo.git
-git branch -M main
-git pull origin main
-
-2️⃣ Envoyer des modifications (commit & push)
 
 git add .
 git commit -m "Initial commit"
-git push origin main
 
-3️⃣ Mettre à jour ton code localement
+git branch -M main
+git remote add origin https://github.com/votre-utilisateur/nova_farm.git
+git push -u origin main
+```
+## 📄 Licence
+Ce projet est sous licence **MIT**.
 
-git pull origin main
-
-📜 License
-
-MIT License © 2024 NovaFarm
+## 📧 Contact
+Pour toute question ou amélioration, contactez-moi à **project@novafarm.com**.
