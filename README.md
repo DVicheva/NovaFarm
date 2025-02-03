@@ -17,7 +17,7 @@ Avant de commencer, assurez-vous d'avoir installé :
 
 ```bash
 # Ouvrez un terminal et exécutez la commande :
-git clone https://github.com/DVicheva//NovaFarm/nova_farm.git
+git clone https://github.com/DVicheva/NovaFarm.git
 cd nova_farm
 ```
 
