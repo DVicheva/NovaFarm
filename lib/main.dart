@@ -20,23 +20,9 @@ void main() async {
   );
   await initializeDateFormatting('fr_FR', null);
   runApp(MyApp());
-  triggerDatabaseUpdate(); // On appelle la fonction de mise à jour DB
+  
 }
 
-Future<void> triggerDatabaseUpdate() async {
-  final url = Uri.parse('https://e9eb4830-a927-4db5-937b-fb433bc050b4-00-1egjtaq7fmzu5.janeway.replit.dev/run-script');
-  try {
-    // On peut utiliser POST ou GET, peu importe. Ici, on fait un POST, plus logique
-    final response = await http.post(url);
-    if (response.statusCode == 200) {
-      print('Mise à jour DB réussie');
-    } else {
-      print('Échec de la mise à jour DB: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Erreur réseau: $e');
-  }
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -46,7 +32,12 @@ Widget build(BuildContext context) {
   return MaterialApp(
     title: 'NovaFarm',
     theme: ThemeData(
-      primarySwatch: Colors.green,
+      fontFamily: 'Times New Roman',
+      useMaterial3: true, // Active le style Material 3
+      hintColor: const Color.fromARGB(255, 43, 180, 180),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color.fromARGB(255, 48, 187, 157), // Choisis une couleur (ex : deepPurple)
+      ),
     ),
     initialRoute: '/login', // Redirige initialement vers LoginPage
     routes: {

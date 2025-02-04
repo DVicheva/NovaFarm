@@ -246,9 +246,16 @@ class _StatisticsPageState extends State<StatisticsPage> {
             child: sensorIds.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : ListView(
-                    children: sensorIds.map((sensorId) {
-                      return _buildSensorGraph(sensorId);
-                    }).toList(),
+                    children: [
+                      // 1) On "déplie" la liste générée par sensorIds.map(...)
+                      ...sensorIds.map((sensorId) {
+                        return _buildSensorGraph(sensorId);
+                      }).toList(),
+
+                      // 2) On ajoute en plus le widget IA
+                      _buildIaPredictionChart(),
+                      _buildRainPredictionChart()
+                    ],
                   ),
           ),
         ],
@@ -461,6 +468,248 @@ class _StatisticsPageState extends State<StatisticsPage> {
       },
     );
   }
+
+  Widget _buildIaPredictionChart() {
+  return StreamBuilder<DocumentSnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .collection('prediction_ia')
+        .doc('prediction_1')
+        .snapshots(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData || !snapshot.data!.exists) {
+        return const Center(child: Text("Aucune donnée IA."));
+      }
+
+      final Map<String, dynamic>? docData =
+          snapshot.data!.data() as Map<String, dynamic>?;
+      if (docData == null) {
+        return const Center(child: Text("Document IA vide."));
+      }
+
+      // Récupération du tableau
+      final myArray = docData['myArray'];
+      if (myArray is! List) {
+        return const Text("Le champ 'myArray' n'est pas un tableau.");
+      }
+      if (myArray.isEmpty) {
+        return const Text("Le tableau 'myArray' est vide.");
+      }
+
+      // Pour chaque indice i (0 à 23), on crée un BarChartGroupData
+      List<BarChartGroupData> barGroups = [];
+      for (int i = 0; i < myArray.length; i++) {
+        final valNum = myArray[i] as num; // valeurs : double / int
+        barGroups.add(
+          BarChartGroupData(
+            x: i,
+            barRods: [
+              BarChartRodData(
+                toY: valNum.toDouble(),
+                width: 10,
+                color: Colors.blue,
+              )
+            ],
+          ),
+        );
+      }
+
+      // On peut afficher ces 24 barres avec l'heure correspondante
+      // Admettons qu'on parte de l'heure actuelle (arrondie) :
+      final now = DateTime.now();
+      int startHour = now.hour; // on part de l'heure en cours
+
+      return Card(
+        margin: const EdgeInsets.all(10),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Prévisions IA (prochaines 24h)",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 250,
+                child: BarChart(
+                  BarChartData(
+                    barGroups: barGroups,
+                    gridData: FlGridData(show: true),
+                    borderData: FlBorderData(show: false),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: true),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          
+                          // On part de l'heure courante : (startHour + i) % 24
+                          getTitlesWidget: (value, meta) {
+                            final hour = (startHour + value.toInt()) % 24;
+                            return Text("$hour h",
+                                style: const TextStyle(fontSize: 11));
+                          },
+
+                          reservedSize: 14,
+                          interval: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Widget _buildRainPredictionChart() {
+  return StreamBuilder<DocumentSnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .collection('prediction_pluie')
+        .doc('pluie_1')
+        .snapshots(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData || !snapshot.data!.exists) {
+        return const Center(child: Text("Aucune donnée de pluie IA."));
+      }
+
+      final Map<String, dynamic>? docData =
+          snapshot.data!.data() as Map<String, dynamic>?;
+      if (docData == null) {
+        return const Center(child: Text("Document pluie IA vide."));
+      }
+
+      // Récupération du tableau
+      final myArray = docData['myArray'];
+      if (myArray is! List) {
+        return const Text("Le champ 'myArray' n'est pas un tableau.");
+      }
+      if (myArray.isEmpty) {
+        return const Text("Le tableau 'myArray' est vide.");
+      }
+
+      // Création des BarChartGroupData & récupération de la valeur max
+      List<BarChartGroupData> barGroups = [];
+      double maxVal = 0;
+      for (int i = 0; i < myArray.length; i++) {
+        final valNum = myArray[i] as num; // double/int
+        final barValue = valNum.toDouble();
+        barGroups.add(
+          BarChartGroupData(
+            x: i,
+            barRods: [
+              BarChartRodData(
+                toY: barValue,
+                width: 10,
+                color: Colors.blue,
+              )
+            ],
+          ),
+        );
+
+        if (barValue > maxVal) {
+          maxVal = barValue;
+        }
+      }
+
+      // Ajuste la plage verticale pour plus de visibilité
+      final double topPadding = maxVal > 0 ? (maxVal * 0.1) : 5;
+      final double yMax = maxVal + topPadding; // Espace en haut du graphe
+
+      // Intervalle de l'axe vertical
+      // (on veut ~5 ou 6 lignes max, d’où la division par 5 ; ajustez selon vos besoins)
+      final double leftInterval = maxVal > 0 ? (yMax / 5).ceilToDouble() : 1;
+
+      // On peut afficher 24 valeurs : i=0..23
+      final now = DateTime.now();
+      int startHour = now.hour; // point de départ (vous pouvez ajuster)
+
+      return Card(
+        margin: const EdgeInsets.all(10),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Prévisions de pluie (prochaines 24h)",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 250,
+                child: BarChart(
+                  BarChartData(
+                    // 🔹 On indique une plage verticale
+                    minY: 0,
+                    maxY: yMax,
+                    barGroups: barGroups,
+                    gridData: FlGridData(show: true),
+                    borderData: FlBorderData(show: false),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          interval: leftInterval, // notre intervalle
+                          getTitlesWidget: (value, meta) {
+                            // Affiche seulement des valeurs entières (ou vous pouvez limiter les décimales)
+                            return Text("${value.toInt()}");
+                          },
+                          reservedSize: 30,
+                        ),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          interval: 1,  // on génère un label pour chaque barre
+                          reservedSize: 28,
+                          getTitlesWidget: (value, meta) {
+                            // On n'affiche le label que si l'index est multiple de 3
+                            if (value % 3 != 0) {
+                              return const SizedBox();
+                            }
+                            final hour = (startHour + value.toInt()) % 24;
+                            return Text(
+                              "$hour h",
+                              style: const TextStyle(fontSize: 12),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 }
 
 
